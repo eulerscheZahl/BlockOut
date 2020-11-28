@@ -1,0 +1,5 @@
+gameloop
+read pitWidth:int pitHeight:int pitDepth:int pitShape:word(301)
+read blockCount:int
+loop blockCount read blockIndex:int width:int height:int depth:int shape:word(28) 
+write blockIndex x z
