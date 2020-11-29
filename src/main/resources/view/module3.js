@@ -3,7 +3,6 @@ import * as orbit from './jsm/controls/OrbitControls.js';
 
 export class module3 {
     cubes = {}
-    pool = []
     scene = new THREE.Scene();
     renderer = new THREE.WebGLRenderer();
 
@@ -44,7 +43,6 @@ export class module3 {
                     after = c.states[idx + 1];
                     frac = (t - before.t) / (after.t - before.t);
                 }
-                c.material.color.set(before.color);
                 c.material.opacity = before.opacity + frac * (after.opacity - before.opacity);
                 c.position.x = before.x + frac * (after.x - before.x);
                 c.position.y = before.y + frac * (after.y - before.y);
@@ -100,23 +98,17 @@ export class module3 {
                 var line = new THREE.LineSegments(gridGeo, material);
                 this.scene.add(line);
             } else if (d[0] == 'S') { // spawn
-                var cube = null;
-                if (this.pool.length > 0) {
-                    cube = this.pool.pop();
-                } else {
-                    const geometry = new THREE.BoxGeometry(1, 1, 1);
-                    const material = new THREE.MeshPhongMaterial({
-                        emissive: 0x072534,
-                        side: THREE.DoubleSide,
-                        flatShading: true,
-                        transparent: true,
-                    });
-                    cube = new THREE.Mesh(geometry, material);
-                    cube.states = []
-                    this.scene.add(cube);
-                }
-                cube.states.push({
+                const geometry = new THREE.BoxGeometry(1, 1, 1);
+                const material = new THREE.MeshPhongMaterial({
                     color: color,
+                    emissive: 0x072534,
+                    side: THREE.DoubleSide,
+                    flatShading: true,
+                    transparent: true,
+                });
+                const cube = new THREE.Mesh(geometry, material);
+                cube.states = []
+                cube.states.push({
                     opacity: 0,
                     t: frameInfo.number,
                     x: +d[3],
@@ -124,16 +116,18 @@ export class module3 {
                     z: +d[5],
                 });
                 cube.states.push({
-                    ...cube.states[cube.states.length - 1],
+                    ...cube.states[0],
                     opacity: 1,
                     t: frameInfo.number + +d[2]
                 });
                 cube.states.push({
-                    ...cube.states[cube.states.length - 1],
+                    ...cube.states[1],
                     y: d[4] - d[6],
                     t: frameInfo.number + 1
                 });
+                this.scene.add(cube);
                 this.cubes[+d[1]] = cube;
+
             } else if (d[0] == 'R') { // remove
                 const cube = this.cubes[+d[1]];
                 cube.states.push({
@@ -145,7 +139,6 @@ export class module3 {
                     opacity: 0,
                     t: frameInfo.number + +d[2]
                 });
-                this.pool.push(cube);
             } else if (d[0] == 'M') { // move
                 const cube = this.cubes[+d[1]];
                 cube.states.push({
