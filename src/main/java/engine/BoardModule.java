@@ -35,15 +35,15 @@ public class BoardModule implements Module {
 
 	public void spawnBlock(Block block, double spawnDuration, int dropDepth) {
 		for (Cube c : block.cubes)
-			toSend += ";S " + c.id + " " + spawnDuration + " " + c.pos[0] + " " + c.pos[1] + " " + c.pos[2] + " " + dropDepth;
+			toSend += ";S " + c.id + " " + Math.round(spawnDuration * 1000) / 1000.0 + " " + c.pos[0] + " " + c.pos[1] + " " + c.pos[2] + " " + dropDepth;
 	}
 
 	public void removeCube(Cube c, double endTime) {
-		toSend += ";R " + c.id + " " + endTime;
+		toSend += ";R " + c.id + " " + Math.round(endTime * 1000) / 1000.0;
 	}
 
 	public void moveCube(Cube c, double startTime, double endTime) {
-		toSend += ";M " + c.id + " " + c.pos[1] + " " + startTime + " " + endTime;
+		toSend += ";M " + c.id + " " + c.pos[1] + " " + Math.round(startTime * 1000) / 1000.0 + " " + Math.round(endTime * 1000) / 1000.0;
 	}
 
 	public void definePit(int width, int height, int depth) {
