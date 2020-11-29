@@ -3,7 +3,7 @@ package engine;
 import java.util.ArrayList;
 
 public class Block extends Geometry {
-	
+
 	public Block(String block) {
 		super(block);
 	}
@@ -26,7 +26,7 @@ public class Block extends Geometry {
 			current = new ArrayList<Block>(rotated);
 			rotated.clear();
 		}
-		
+
 		return current;
 	}
 
@@ -34,18 +34,18 @@ public class Block extends Geometry {
 		Block result = new Block(this.toString());
 		int d1 = (rotAxis + 1) % 3;
 		int d2 = (rotAxis + 2) % 3;
-		
+
 		// adjust dimension
 		result.dimensions[d1] = this.dimensions[d2];
 		result.dimensions[d2] = this.dimensions[d1];
-		
+
 		// rotate blocks
 		for (int i = 0; i < cubes.size(); i++) {
 			result.cubes.get(i).pos[rotAxis] = this.cubes.get(i).pos[rotAxis];
 			result.cubes.get(i).pos[d1] = -this.cubes.get(i).pos[d2];
 			result.cubes.get(i).pos[d2] = this.cubes.get(i).pos[d1];
 		}
-		
+
 		// re-adjust to origin of coordinate system
 		for (int dim = 0; dim < 3; dim++) {
 			final int _dim = dim;
@@ -56,11 +56,11 @@ public class Block extends Geometry {
 				result.shift(dim, -1);
 			}
 		}
-		
+
 		return result;
 	}
 
 	public void shift(int dimension, int offset) {
-		for (Cube c : cubes) c.pos[dimension]+=offset;
+		for (Cube c : cubes) c.pos[dimension] += offset;
 	}
 }

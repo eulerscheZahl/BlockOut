@@ -1,13 +1,4 @@
 <div id="statement_back" class="statement_back" style="display:none"></div>
-TODOs:
-<ul>
-  <li>more testcases</li>
-  <li>different validators</li>
-  <li>maybe give next block in input too?</li>
-  <li>Constraints definition</li>
-  <li>Verify user inputs (e.g. is placement even inside pit?)</li>
-</ul>
-<br>
 <div class="statement-body">
     <!-- GOAL -->
     <div class="statement-section statement-goal">
@@ -105,7 +96,11 @@ TODOs:
         <!-- Protocol block -->
         <div class="blk">
             <div class="title">Constraints</div>
-            <div class="text">TODO: pit size, block size<br>
+            <div class="text">
+                3 &le; <var>pitWidth</var> = <var>pitDepth</var> &le; 6<br>
+                6 &le; <var>pitHeight</var> &le; 12<br>
+                1 &le; <var>blockCount</var> &le; 64<br>
+                1 &le; <var>width</var>, <var>height</var>, <var>depth</var> &le; min(<const>5</const>, <var>pitWidth</var>)<br>
                 <br>Allotted response time to output
                 is &le; <const>1</const> second for the first turn, <const>50</const> ms for later turns.
             </div>

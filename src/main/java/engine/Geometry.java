@@ -3,7 +3,7 @@ package engine;
 import java.util.ArrayList;
 
 public class Geometry {
-	protected int[] dimensions = new int[3];
+	public int[] dimensions = new int[3];
 	protected ArrayList<Cube> cubes = new ArrayList<>();
 
 	protected Geometry() {
@@ -25,6 +25,14 @@ public class Geometry {
 				z++;
 			}
 		}
+	}
+
+	public int minDimension() {
+		return Math.min(Math.min(dimensions[0], dimensions[1]), dimensions[2]);
+	}
+
+	public int maxDimension() {
+		return Math.max(Math.max(dimensions[0], dimensions[1]), dimensions[2]);
 	}
 
 	@Override

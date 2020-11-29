@@ -13,50 +13,74 @@ import engine.BoardModule;
 import engine.Pit;
 
 public class Referee extends AbstractReferee {
-    @Inject private SoloGameManager<Player> gameManager;
-    @Inject private BoardModule board;
+	@Inject
+	private SoloGameManager<Player> gameManager;
+	@Inject
+	private BoardModule board;
 
-    private Pit pit;
-    private ArrayList<Block> blocks = new ArrayList<>();
-    private Random random;
-    @Override
-    public void init() {
-    	String[] parts = gameManager.getTestCaseInput().get(0).split(";");
-    	random = new Random(Integer.parseInt(parts[0]));
-    	String[] pitDim = parts[1].split(" ");
-    	pit = new Pit(gameManager, board, Integer.parseInt(pitDim[0]), Integer.parseInt(pitDim[1]), Integer.parseInt(pitDim[2]));
-    	for (int i = 2; i < parts.length; i++) blocks.add(new Block(parts[i]));
-    }
+	private Pit pit;
+	private ArrayList<Block> blocks = new ArrayList<>();
+	private Random random;
+	private boolean lost = false;
 
-    @Override
-    public void gameTurn(int turn) {
-    	if (pit.removeLayers()) {
-    		gameManager.setMaxTurns(gameManager.getMaxTurns() + 1);
-    		return;
+	@Override
+	public void init() {
+		String[] parts = gameManager.getTestCaseInput().get(0).split(";");
+		random = new Random(Integer.parseInt(parts[0]));
+		String[] pitDim = parts[1].split(" ");
+		pit = new Pit(gameManager, board, Integer.parseInt(pitDim[0]), Integer.parseInt(pitDim[1]), Integer.parseInt(pitDim[2]));
+		for (int i = 2; i < parts.length; i++) {
+			Block block = new Block(parts[i]);
+			if (block.maxDimension() <= pit.minDimension()) blocks.add(block);
+		}
+	}
+
+	@Override
+	public void onEnd() {
+		if (!lost) gameManager.winGame();
+	}
+
+	private void loseGame(String message) {
+		if (lost) return;
+		gameManager.loseGame(message);
+		lost = true;
+	}
+
+	@Override
+	public void gameTurn(int turn) {
+		if (pit.removeLayers()) { // create an extra frame in the replay
+			gameManager.setMaxTurns(gameManager.getMaxTurns() + 1);
+			return;
 		}
 
-    	ArrayList<String> inputs = new ArrayList<String>();
-    	inputs.add(pit.toString());
-    	Block toPlace = blocks.get(random.nextInt(blocks.size()));
-    	ArrayList<Block> rotations = toPlace.createRotations();
-    	inputs.add(String.valueOf(rotations.size()));
-    	for (int i = 0; i < rotations.size(); i++) inputs.add(i + " " + rotations.get(i));
-    	
-    	for (String s : inputs) gameManager.getPlayer().sendInputLine(s);
-    	gameManager.getPlayer().execute();
-    	try {
+		ArrayList<String> inputs = new ArrayList<String>();
+		inputs.add(pit.toString());
+		Block toPlace = blocks.get(random.nextInt(blocks.size()));
+		ArrayList<Block> rotations = toPlace.createRotations();
+		inputs.add(String.valueOf(rotations.size()));
+		for (int i = 0; i < rotations.size(); i++) inputs.add(i + " " + rotations.get(i));
+
+		for (String s : inputs) gameManager.getPlayer().sendInputLine(s);
+		gameManager.getPlayer().execute();
+		try {
 			String output = gameManager.getPlayer().getOutputs().get(0);
 			String[] parts = output.split(" ");
 			Block taken = rotations.get(Integer.parseInt(parts[0]));
-	        pit.placeBlock(taken, Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+			int x = Integer.parseInt(parts[1]);
+			int z = Integer.parseInt(parts[2]);
+			if (x < 0 || x + taken.dimensions[0] > pit.dimensions[0]) throw new Exception("x coordinate out of range");
+			if (z < 0 || z + taken.dimensions[2] > pit.dimensions[2]) throw new Exception("z coordinate out of range");
+			pit.placeBlock(taken, x, z);
 		} catch (TimeoutException e) {
-			gameManager.loseGame("timeout");
-			return;
+			loseGame("timeout");
+		} catch (IndexOutOfBoundsException e) {
+			loseGame("command in wrong format");
+		} catch (NumberFormatException e) {
+			loseGame("failed to parse number");
 		} catch (Exception e) {
-			gameManager.loseGame("command in wrong format");
-			return;
+			loseGame(e.getMessage());
 		}
-    	
-    	if (pit.hasLost()) gameManager.loseGame("The pit is full");
-    }
+
+		if (pit.hasLost()) loseGame("The pit is full");
+	}
 }

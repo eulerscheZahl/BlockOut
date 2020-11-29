@@ -59,8 +59,7 @@ public class Pit extends Geometry {
 			if (completeLayers.contains(c.pos[1])) {
 				module.removeCube(c, Constants.SPAWN_TIME / totalTime);
 				removeList.add(c);
-			}
-			else {
+			} else {
 				int depth = 0;
 				for (int l : completeLayers) {
 					if (l < c.pos[1]) depth++;
