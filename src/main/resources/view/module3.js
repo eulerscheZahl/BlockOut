@@ -52,7 +52,7 @@ export class module3 {
     }
 
     handleFrameData(frameInfo, data) {
-        if (!data) return
+        if (!data) return frameInfo;
         const color = Math.floor(Math.random() * (1 << 24));
         data.split(';').forEach(s => {
             const d = s.split(' ')

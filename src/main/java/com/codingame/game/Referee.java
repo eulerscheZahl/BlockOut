@@ -68,9 +68,9 @@ public class Referee extends AbstractReferee {
 			Block taken = rotations.get(Integer.parseInt(parts[0]));
 			int x = Integer.parseInt(parts[1]);
 			int z = Integer.parseInt(parts[2]);
+			pit.placeBlock(taken, x, z);
 			if (x < 0 || x + taken.dimensions[0] > pit.dimensions[0]) throw new Exception("x coordinate out of range");
 			if (z < 0 || z + taken.dimensions[2] > pit.dimensions[2]) throw new Exception("z coordinate out of range");
-			pit.placeBlock(taken, x, z);
 		} catch (TimeoutException e) {
 			loseGame("timeout");
 		} catch (IndexOutOfBoundsException e) {
