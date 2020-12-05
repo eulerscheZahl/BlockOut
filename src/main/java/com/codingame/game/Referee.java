@@ -29,10 +29,13 @@ public class Referee extends AbstractReferee {
 		random = new Random(Integer.parseInt(parts[0]));
 		String[] pitDim = parts[1].split(" ");
 		pit = new Pit(gameManager, board, Integer.parseInt(pitDim[0]), Integer.parseInt(pitDim[1]), Integer.parseInt(pitDim[2]));
+		ArrayList<Block> tooLarge = new ArrayList<>();
 		for (int i = 2; i < parts.length; i++) {
 			Block block = new Block(parts[i]);
 			if (block.maxDimension() <= pit.minDimension()) blocks.add(block);
+			else tooLarge.add(block);
 		}
+		if (blocks.size() == 0) blocks = tooLarge; // tetris testcase
 	}
 
 	@Override

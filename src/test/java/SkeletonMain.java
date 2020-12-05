@@ -5,7 +5,7 @@ public class SkeletonMain {
 
         SoloGameRunner gameRunner = new SoloGameRunner();
         gameRunner.setAgent(Agent2.class);
-        gameRunner.setTestCase("test4.json");
+        gameRunner.setTestCase("test2.json");
 
         gameRunner.start();
     }
