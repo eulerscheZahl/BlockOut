@@ -1,2 +1,1 @@
-# BlockOut
-View the puzzle on [CodinGame](https://www.codingame.com/contribute/view/5774f141c59462b06e77d826d14d052d7966)
+Referee for the game Blockout on [CodinGame](https://www.codingame.com/training/hard/blockout).
