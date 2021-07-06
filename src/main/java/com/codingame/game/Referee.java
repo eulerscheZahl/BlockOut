@@ -25,6 +25,7 @@ public class Referee extends AbstractReferee {
 
 	@Override
 	public void init() {
+		gameManager.setTurnMaxTime(150);
 		String[] parts = gameManager.getTestCaseInput().get(0).split(";");
 		random = new Random(Integer.parseInt(parts[0]));
 		String[] pitDim = parts[1].split(" ");
